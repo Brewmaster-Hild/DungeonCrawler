@@ -14,22 +14,16 @@ import java.awt.event.*;
 
 public class GameWindow extends JFrame {
 
-	public static JPanel dungeonCrawlerGame;
+	public static DungeonCrawlerGame game;
 	public Graphics g2d;
 
 	public GameWindow() {
 
-		dungeonCrawlerGame = new JPanel() {
-												public void paintComponent(Graphics g) {
-													
-													super.paintComponent(g);
-
-												}
-										};
-		dungeonCrawlerGame.setBackground(Color.BLACK);
+		game = new DungeonCrawlerGame();
 		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(dungeonCrawlerGame, BorderLayout.CENTER);
+		this.addKeyListener(new moveListener());
+		getContentPane().add(game, BorderLayout.CENTER);
 
 	}
 
-} 
+}
