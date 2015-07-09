@@ -17,13 +17,14 @@ public class DungeonCrawlerGame extends JPanel {
 		public static DungeonGenerator dungeon;
         public static CharacterTracker tracker;
         public static int cellLength, grid[][][];
+        private Sprites drawer;
 
         public DungeonCrawlerGame() {
             dungeon = new DungeonGenerator();
            	dungeon.generate();
             tracker = new CharacterTracker();
             spawnCharacters();
-            this.setBackground(Color.WHITE);
+            drawer = new Sprites();
         }
 
         public Dimension getPreferredSize() { return new Dimension(500, 500); }
@@ -46,28 +47,31 @@ public class DungeonCrawlerGame extends JPanel {
 
             for (int r = 0; r < tracker.gridWithCharacters[dungeon.FLOOR].length; r++) {
                 for (int c = 0; c < tracker.gridWithCharacters[dungeon.FLOOR][r].length; c++) {
-                    if ((tracker.gridWithCharacters[dungeon.FLOOR][r][c]) == -1) g2d.setColor(Color.BLACK);
-                    else if ((tracker.gridWithCharacters[dungeon.FLOOR][r][c]) == 1 || (tracker.gridWithCharacters[dungeon.FLOOR][r][c]) == 2)  g2d.setColor(Color.WHITE);
-                    else if ((tracker.gridWithCharacters[dungeon.FLOOR][r][c]) == 3)  g2d.setColor(Color.GRAY);
-                    else if ((tracker.gridWithCharacters[dungeon.FLOOR][r][c]) == 10 || (tracker.gridWithCharacters[dungeon.FLOOR][r][c]) == 11) g2d.setColor(Color.RED);
-                    else if (tracker.gridWithCharacters[dungeon.FLOOR][r][c] == 99) g2d.setColor(Color.CYAN);
-
-                    g2d.fillRect(c * cellLength, r * cellLength, cellLength, cellLength);
-                    if (tracker.gridWithCharacters[dungeon.FLOOR][r][c] == 99) tracker.characters[0].draw(g2d, cellLength);
-                    g2d.setColor(Color.BLUE);
-                    g2d.draw(new Rectangle(c*cellLength,r*cellLength,cellLength,cellLength));
+                    if ((tracker.gridWithCharacters[dungeon.FLOOR][r][c]) == -1) drawer.drawStoneWall(g2d, c * cellLength, r * cellLength, cellLength, cellLength);
+                    else if ((tracker.gridWithCharacters[dungeon.FLOOR][r][c]) == 1 || (tracker.gridWithCharacters[dungeon.FLOOR][r][c]) == 2) drawer.drawWoodFloor(g2d, c * cellLength, r * cellLength, cellLength, cellLength);
+                    else if ((tracker.gridWithCharacters[dungeon.FLOOR][r][c]) == 3) drawer.drawWoodDoor(g2d, c * cellLength, r * cellLength, cellLength, cellLength);
+                    else if (tracker.gridWithCharacters[dungeon.FLOOR][r][c] == 10) drawer.drawStoneStepsDown(g2d, c * cellLength, r * cellLength, cellLength, cellLength);
+                    else if (tracker.gridWithCharacters[dungeon.FLOOR][r][c] == 11) drawer.drawStoneStepsUp(g2d, c * cellLength, r    * cellLength, cellLength, cellLength);
                 }
             }
-
+            tracker.characters[0].draw(g2d, cellLength);
+            tracker.drawMonsters(g2d, cellLength);
         }
 
         private void spawnCharacters() {
 
-            tracker.spawnCharacter(0);
+            tracker.spawnCharacter(0, 0);
+            tracker.generateMonsters();
 
         }
 
         public static int getCellLength() { return cellLength; }
+
+        public void displayDeadScreen() {
+
+
+
+        }
 }
 
 class moveListener implements KeyListener
@@ -117,8 +121,9 @@ class moveListener implements KeyListener
         if (ladderCheck == 10) {
             DungeonCrawlerGame.dungeon.climbLadderDown();
             DungeonCrawlerGame.tracker.characters[0].resetCords();
-            if (gameGridCopy[DungeonCrawlerGame.dungeon.FLOOR][0][0] == 0)
+            if (gameGridCopy[DungeonCrawlerGame.dungeon.FLOOR][0][0] == 0) {
                 DungeonCrawlerGame.dungeon.generate();
+            }
         }
 
         else if (ladderCheck == 11) {

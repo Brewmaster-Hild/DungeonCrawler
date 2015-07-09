@@ -16,6 +16,7 @@ public class GameWindow extends JFrame {
 
 	public static DungeonCrawlerGame game;
 	public Graphics g2d;
+	private moveThread move;
 
 	public GameWindow() {
 
@@ -23,7 +24,31 @@ public class GameWindow extends JFrame {
 		getContentPane().setLayout(new BorderLayout());
 		this.addKeyListener(new moveListener());
 		getContentPane().add(game, BorderLayout.CENTER);
-
+		move = new moveThread();
+		move.start();
+		game.tracker.resetGrid();
+		game.repaint();
 	}
 
+}
+
+class moveThread extends Thread
+{
+    public void run()
+    {
+        while(true)
+        {
+            try
+            {
+            	DungeonCrawlerGame.tracker.moveMonsters();
+                GameWindow.game.repaint();
+                
+                Thread.sleep(750);
+            }
+            catch(InterruptedException e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
 }

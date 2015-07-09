@@ -6,20 +6,27 @@
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.util.*;
 
 public class Adventurer extends Character
 {
-	private Sprites drawer;
-	private int[][][] temp;
 	private int startX, startY;
+	private int maxExp, level;
 
 	public Adventurer(int x, int y) {
 
+		name = "Adventurer";
 		this.x = x;
 		startX = x;
 		this.y = y;
 		startY = y;
-		temp = DungeonCrawlerGame.dungeon.getGameGrid();
+		maxHp = 25;
+		hp = 25;
+		dmg = 2;
+		def = 0;
+		maxExp = 50;
+		exp = 0;
+		level = 1;
 
 	}
 
@@ -49,32 +56,6 @@ public class Adventurer extends Character
 		drawer = new Sprites();
 		drawer.drawAdventurer(g, x * l, y * l, l, l);
 
-	}
-
-	public boolean hitWall() { 
-		
-
-		return true;
-
-	}
-
-	private int isAdjacent(int tile) {
-
-		switch(direction) {
-			case 3: if (x-1 != - 1 && temp[DungeonCrawlerGame.dungeon.FLOOR][y][x - 1] != tile)
-						return 3;
-					break;
-			case 1: if (x+1 != temp[DungeonCrawlerGame.dungeon.FLOOR][0].length && temp[DungeonCrawlerGame.dungeon.FLOOR][y][x + 1] != tile)
-						return 1;
-					break;
-			case 0: if (y-1 != -1 && temp[DungeonCrawlerGame.dungeon.FLOOR][y - 1][x] != tile)
-						return 0;
-					break;
-			case 2: if (y+1 != temp[DungeonCrawlerGame.dungeon.FLOOR].length && temp[DungeonCrawlerGame.dungeon.FLOOR][y + 1][x] != tile)
-						return 2;
-					break;
-		}
-		return 4;
 	}
 
 	public int checkForLadder() {
@@ -111,5 +92,26 @@ public class Adventurer extends Character
 	public void resetCords() {
 		x = startX;
 		y = startY;
+	}
+
+	public void increaseExp(int exp) {
+
+		System.out.print("Gained " + exp + " experience.\n");
+		this.exp += exp;
+		if (exp > maxExp)
+			levelUp();
+
+	}
+
+	private void levelUp() {
+
+		System.out.print("Level up!\n");
+		maxHp +=4;
+		hp = maxHp;
+		dmg++;
+		exp = exp - maxExp;
+		maxExp = maxExp * 2;
+		level++;
+
 	}
 }
