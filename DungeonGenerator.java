@@ -9,7 +9,7 @@ import java.util.*;
 public class DungeonGenerator {
 
 	public static int FLOOR = 0;
-	public static final int WALL = -1, ROOMFLOOR = 1, CORRIDORFLOOR = 2, DOOR = 3, LADDER_DOWN = 10, LADDER_UP = 11, CHARACTER = 99;
+	public static final int WALL = -1, ROOMFLOOR = 1, CORRIDORFLOOR = 2, DOOR = 3, CHEST = 4, LADDER_DOWN = 10, LADDER_UP = 11, CHARACTER = 99;
 	private int startRow, startCol;
 	private Random rng = new Random();
 	private int gameGrid[][][];
@@ -28,9 +28,7 @@ public class DungeonGenerator {
 		makeLadderUp();
 		makeLadderDown();
 
-		// for (int r = 0; r < gameGrid[FLOOR].length; r++)
-		// 	for (int c = 0; c < gameGrid[FLOOR][r].length; c++)
-		// 		System.out.printf(Integer.toString(gameGrid[FLOOR][r][c]));
+		makeChests();
 	}
 
 	private void randomlyGenerate() {
@@ -140,8 +138,6 @@ public class DungeonGenerator {
 
 	private boolean makeLadderDown() {
 
-		// (gameGrid[FLOOR][0].length) / 2, (gameGrid[FLOOR].length) / 2, 5, 5, 2
-
 		int x, y, tempX, tempY, xStart, yStart, xEnd, yEnd;
 		if (FLOOR == gameGrid.length - 1)
 			return false;
@@ -174,6 +170,31 @@ public class DungeonGenerator {
 		return false;
 	}
 
+	private void makeChests() {
+
+		int x, y, tempX, tempY, xStart, yStart, xEnd, yEnd, chestsPerFloor;
+
+		for (chestsPerFloor = 0; chestsPerFloor < 3; chestsPerFloor++) {
+
+			for (int i = 0; i < 400; i++) {
+				x = rng.nextInt(gameGrid[FLOOR][0].length); y = rng.nextInt(gameGrid[FLOOR].length);
+				tempX = gameGrid[FLOOR][0].length / 2; tempY = gameGrid[FLOOR].length / 2;
+				yStart = tempY-1; yEnd = tempY+4; xStart = tempX - 5 / 2; xEnd = tempX + (6) / 2;
+				if (!isInside(x, y, xStart, yStart, xEnd, yEnd) && !isAlsoAdjacent(x, y, DOOR) && gameGrid[FLOOR][y][x] == ROOMFLOOR) {
+					gameGrid[FLOOR][y][x] = CHEST;
+					System.out.print("chest made. ");
+					DungeonCrawlerGame.chests.set(new Chest(x, y), chestsPerFloor + (FLOOR * 3));
+					break;
+				}
+
+			}
+
+		}
+
+		System.out.print("\n");
+
+	}
+
 	private void setCells(int xStart, int yStart, int xEnd, int yEnd, int tile) {
 		for (int y = yStart; y < yEnd + 1; y++)
 			for (int x = xStart; x < xEnd + 1; x++)
@@ -181,19 +202,6 @@ public class DungeonGenerator {
 	}
 
 	private void setCell(int x, int y, int tile) { gameGrid[FLOOR][y][x] = tile; }
-
-	// private void setCell(int x, int y, int tile, int direction) { 
-
-	// 	if (direction == 0)
-	// 		gameGrid[FLOOR][y][x] = tile;
-	// 	else if (direction == 1)
-	// 		gameGrid[FLOOR][y][x] = tile; 
-	// 	else if (direction == 2)
-	// 		gameGrid[FLOOR][y][x] = tile; 
-	// 	else if (direction == 3)
-	// 		gameGrid[FLOOR][y][x] = tile; 
-
-	// }
 
 	private void scanForDoors() {
 

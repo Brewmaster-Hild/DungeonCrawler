@@ -26,7 +26,6 @@ public class Slime extends Monster
 	}
 
 	public void draw(Graphics2D g, int l) {
-		drawer = new Sprites();
 		drawer.drawSlime(g, x * l, y * l, l, l);
 	}
 

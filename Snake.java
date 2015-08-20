@@ -26,7 +26,6 @@ public class Snake extends Monster
 	}
 
 	public void draw(Graphics2D g, int l) {
-		drawer = new Sprites();
 		drawer.drawSnake(g, x * l, y * l, l, l);
 	}
 

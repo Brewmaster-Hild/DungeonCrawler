@@ -10,8 +10,8 @@ import java.util.*;
 
 public class Character {
 
-	protected Sprites drawer;
 	protected Random rng = new Random();
+	protected Sprites drawer = new Sprites();
 	protected String name;
 	public int direction, x, y;
 	protected int maxHp, hp, dmg, def, exp;
@@ -90,9 +90,27 @@ public class Character {
 		return false;
 	}
 
+	public void drawInventory(Graphics2D g2d, int cellLength) {}
+
+	public void drawEquipped(Graphics2D g2d, int cellLength) {}
+
+	public void equip(int id) {}
+
+	public void unequip(int id) {}
+
+	public void pickUpItem(Item item) {}
+
+	public void use(int id) {}
+
+	public void drop(int id) {}
+
+	public Inventory getInventory(int id) { return null; }
+
+	public int checkForChest() { return 0; }
+
 	public int checkForLadder() { return 0; }
 
-	public void resetCords() { }
+	public void resetCords() {}
 
 	public boolean isDead() { if (hp <= 0) return true; return false; }
 
@@ -109,4 +127,6 @@ public class Character {
 	protected void increaseExp(int exp) { }
 
 	public void printStats() { System.out.print(name + ": " + hp + "/" + maxHp); }
+
+	public void checkStats(Item item) {}
 }

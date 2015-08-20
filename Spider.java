@@ -26,7 +26,6 @@ public class Spider extends Monster
 	}
 
 	public void draw(Graphics2D g, int l) {
-		drawer = new Sprites();
 		drawer.drawSpider(g, x * l, y * l, l, l);
 	}
 

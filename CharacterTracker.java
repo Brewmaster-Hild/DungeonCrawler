@@ -10,13 +10,12 @@ import java.awt.Graphics2D;
 public class CharacterTracker
 {
 	public int gridWithCharacters[][][] = new int[25][25][25];
-	private int charsPerFloor = 10;
-	public Character characters[] = new Character[charsPerFloor+1];
+	private int charsPerFloor = 5;
+	public Character characters[] = new Character[charsPerFloor * 25];
 	private Random rng = new Random();
+	public boolean adventurerDead = false;
 
-	public CharacterTracker() {
-		gridWithCharacters = copyGameGrid(DungeonCrawlerGame.dungeon.getGameGrid());
-	}
+	public CharacterTracker() { gridWithCharacters = copyGameGrid(DungeonCrawlerGame.dungeon.getGameGrid()); }
 
 	private void createCharacter(int option, int x, int y, int index) {
 
@@ -44,8 +43,9 @@ public class CharacterTracker
 		int x, y;
 
 		for (int i = 0; i < 400; i++) {
-			x = rng.nextInt(gridWithCharacters[DungeonGenerator.FLOOR][0].length); y = rng.nextInt(gridWithCharacters[DungeonGenerator.FLOOR].length);
-			if ((gridWithCharacters[DungeonGenerator.FLOOR][y][x] == DungeonGenerator.ROOMFLOOR)) {
+			x = rng.nextInt(gridWithCharacters[DungeonGenerator.FLOOR][0].length); 
+			y = rng.nextInt(gridWithCharacters[DungeonGenerator.FLOOR].length);
+			if (gridWithCharacters[DungeonGenerator.FLOOR][y][x] == DungeonGenerator.ROOMFLOOR) {
 				gridWithCharacters[DungeonGenerator.FLOOR][y][x] = tileId;
 				createCharacter(option, x, y, index); 
 				return true;
@@ -84,36 +84,36 @@ public class CharacterTracker
 
 		int option, tileId;
 
-		for (int i = 1; i <= charsPerFloor; i++) {
+		for (int i = 1; i < charsPerFloor + 1; i++) {
 			option = rng.nextInt(5) + 1;
 			tileId = rng.nextInt(5) + 50;
-			spawnMonster(option, i, tileId);
+			spawnMonster(option, i + (charsPerFloor * DungeonGenerator.FLOOR), tileId);
 		}
 
 	}
 
 	public void drawMonsters(Graphics2D g, int l) {
 
-		for (int i = 1; i < charsPerFloor; i++)
-			if (isAlive(i))
-				characters[i].draw(g, l);
+		for (int i = 1; i < charsPerFloor + 1; i++)
+			if (isAlive(i + (charsPerFloor * DungeonGenerator.FLOOR)))
+				characters[i + (charsPerFloor * DungeonGenerator.FLOOR)].draw(g, l);
 
 	}
 
 	public void resetMonsters() {
 
-		for (int i = 1; i < charsPerFloor; i++)
-			characters[i] = new Character();
+		for (int i = 1; i < charsPerFloor + 1; i++)
+			characters[i + (charsPerFloor * DungeonGenerator.FLOOR)] = new Character();
 
 	}
 
 	public void moveMonsters() {
 
 		for (int i = 1; i < charsPerFloor + 1; i++) {
-			if (isAlive(i) && !(characterInBattle(i)))
-				characters[i].move();
-			if (isAlive(i) && characterInBattle(i))
-				fight(i);
+			if (isAlive(i + (charsPerFloor * DungeonGenerator.FLOOR)) && !(characterInBattle(i + (charsPerFloor * DungeonGenerator.FLOOR))))
+				characters[i + (charsPerFloor * DungeonGenerator.FLOOR)].move();
+			if (isAlive(i + (charsPerFloor * DungeonGenerator.FLOOR)) && characterInBattle(i + (charsPerFloor * DungeonGenerator.FLOOR)))
+				fight(i + (charsPerFloor * DungeonGenerator.FLOOR));
 		}
 
 	}
@@ -121,8 +121,8 @@ public class CharacterTracker
 	public boolean characterInBattle(int id) {
 
 		if (id == 0) {
-			for (int i = 0; i < charsPerFloor; i++) {
-				if (characters[0].isAdjacentToCharacter(characters[i])) {
+			for (int i = 0; i < charsPerFloor + 1; i++) {
+				if (characters[0].isAdjacentToCharacter(characters[i + (charsPerFloor * DungeonGenerator.FLOOR)])) {
 					return true;
 				}
 			}
@@ -142,20 +142,16 @@ public class CharacterTracker
 		characters[0].printStats(); System.out.print(" Did " + (characters[0].getDmg() - characters[id].getDef()) + " damage to " + characters[id].getName() + "\n");
 		characters[id].printStats(); System.out.print(" Did " + (characters[id].getDmg() - characters[0].getDef()) + " damage to " + characters[0].getName() + "\n");
 
-		if (characters[0].isDead())
-			GameWindow.game.displayDeadScreen();
-		if (characters[id].isDead()) {
+		if (characters[0].getHp() <= 0)
+			adventurerDead = true;
+		if (characters[id].getHp() <= 0) {
 			characters[0].increaseExp(characters[id].getExp());
 			destoryCharacter(id);
 		}
 
 	}
 
-	private void destoryCharacter(int id) {
-
-		characters[id] = null;
-
-	}
+	private void destoryCharacter(int id) { characters[id] = null; }
 
 	public boolean isAlive(int id) {
 

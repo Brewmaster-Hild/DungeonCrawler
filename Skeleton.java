@@ -26,7 +26,6 @@ public class Skeleton extends Monster
 	}
 
 	public void draw(Graphics2D g, int l) {
-		drawer = new Sprites();
 		drawer.drawSkeleton(g, x * l, y * l, l, l);
 	}
 

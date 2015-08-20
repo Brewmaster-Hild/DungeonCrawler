@@ -10,10 +10,12 @@ import java.awt.*;
 
 public class DungeonCrawler
 {
+	public static GameWindow dungeonCrawler;
+
 	public static void main(String[] args)
 	{
-		GameWindow dungeonCrawler = new GameWindow();
-		dungeonCrawler.setPreferredSize(new Dimension(500, 500));
+		dungeonCrawler = new GameWindow();
+		dungeonCrawler.setPreferredSize(new Dimension(500, 520));
 		dungeonCrawler.setVisible(true);
 		dungeonCrawler.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		dungeonCrawler.pack();
